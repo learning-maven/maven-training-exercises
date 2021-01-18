@@ -1,10 +1,9 @@
 # Exercise 3
 
-## Step 1: let it fail!
+## Step 1: not much is happening
 
 ```shell
-  $> mvn install
-  $> mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:1.2:list
+  $> mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:1.4:list
 ```
 
 > What does it display? Why?
@@ -15,7 +14,7 @@ First: change `<packaging>pom</packaging>` to `<packaging>jar</packaging>`.
 Then:
 
 ```shell
- $> mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:1.2:list
+ $> mvn fr.jcgay.maven.plugins:buildplan-maven-plugin:1.4:list
 ```
 
 > Compare this output to the previous? Why has it changed?
