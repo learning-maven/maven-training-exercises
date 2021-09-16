@@ -93,38 +93,43 @@ It requires dependencies on the class path.
 
 1. We can have jar plugin to add class-path entries into the manifest by;
    ```xml
-   <plugin>
-       <artifactId>maven-jar-plugin</artifactId>
-       <version>3.2.0</version>
-       <configuration>
-           <archive>
-               <manifest>
-                   <mainClass>com.acme.fbiville.App</mainClass>
-                   <addClasspath>true</addClasspath>
-               </manifest>
-           </archive>
-       </configuration>
-   </plugin>
+    <plugins>
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.0</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>com.acme.fbiville.App</mainClass>
+                        <classpathPrefix>lib</classpathPrefix>
+                        <addClasspath>true</addClasspath>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
    ```
 
-2. Build our own version of manifest file and tell the jar plugin to use it instead;
-   ```xml
-   <plugin>
-       <artifactId>maven-jar-plugin</artifactId>
-       <version>3.2.0</version>
-       <configuration>
-          <archive>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
-       </configuration>
-   </plugin>
-   ```
-
-Even we did the above, we still need to have the dependency jars sit next to the executable jar.
+With this maven will copy all dependencies into `lib` directory and add class path entries into the manifest.
 
 ```shell
 $> mvn package
-$> cp $HOME/.m2/repository/info/picocli/picocli/4.6.1/picocli-4.6.1.jar ./target
 ```
 
 and finally;
@@ -176,6 +181,7 @@ $> java -jar target/packaging-1.0-SNAPSHOT-jar-with-dependencies.jar -g Welcome 
 Let's assume this is a library that could be used by third parties and we want to stick with our version of picocli.
 
 ```xml
+
 <plugin>
     <artifactId>maven-shade-plugin</artifactId>
     <version>3.2.4</version>
