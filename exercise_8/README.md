@@ -55,3 +55,66 @@ mvn --threads 4 package
 ```
 
 Do all modules run in parallel? Why (or why not)?
+
+## Step 5: Test Jars?
+
+What is a test-jar? Look into TestCallbacksB class inside module b, which is used by TestCallbacksA in module a. For that to happen (to depend on test classes),
+we added a test-jar typed dependency from a to b. Let's add a new Test class on c, and extend it with `TestCallbacksA` from module a.
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>5.7.2</version>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>a</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+```java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@ExtendWith( TestCallbacksA.class )
+public class TestC
+{
+
+    @Test
+    void shouldBeFalse()
+    {
+        assertFalse( false );
+    }
+}
+```
+
+Let's try to run the test
+
+```shell
+mvn verify
+```
+
+It failed, why? How can we fix it?
+
+```xml
+<dependency>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>b</artifactId>
+    <version>${project.version}</version>
+    <type>test-jar</type>
+    <scope>test</scope>
+</dependency>
+```
+
+Can we structure this use-case in a better way? 
