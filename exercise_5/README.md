@@ -41,5 +41,38 @@ Run the following:
 mvn --file my-application/pom.xml dependency:tree -Dverbose
 ```
 
-Does it help understanding the issue?
-Can we and if so, how do we solve the problem?
+Does it help understanding the issue? Can we and if so, how do we solve the problem?
+
+## Step 3: let's use some intelligence
+
+there is one very helpful plugin that could help us identify the problems. Add the following section inside
+build->plugins in `my-application/pom.xml`.
+
+```xml
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-enforcer-plugin</artifactId>
+    <version>3.0.0</version>
+    <executions>
+        <execution>
+            <id>enforce</id>
+            <phase>validate</phase>
+            <goals>
+                <goal>enforce</goal>
+            </goals>
+            <configuration>
+                <rules>
+                    <DependencyConvergence></DependencyConvergence>
+                </rules>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+let's just try again;
+
+```shell
+mvn --file my-application/pom.xml compile
+```
