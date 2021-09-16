@@ -47,7 +47,7 @@ What if one of these modules depended on module D: would the above command still
 
 ## Step 4: Parallel builds!
 
-Finally, module builds can be run in parallel with the `--threads` flag.
+Module builds can be run in parallel with the `--threads` flag.
 The value can be any number of threads, or a symbolic one like `1C`, which means "1 thread per CPU core" (`1.5C` is also possible e.g.).
 
 ```shell
@@ -55,3 +55,92 @@ mvn --threads 4 package
 ```
 
 Do all modules run in parallel? Why (or why not)?
+
+## Step 5: Test Jars?
+
+### Definition
+
+What is a test-jar?
+
+Look into `b/src/test/java/TestUtilB.java` class inside module B.
+We can see `a/src/test/java/TestUtilA.java` imports `TestUtilB` and calls one of its methods. 
+For the test compilation and execution to work, we added a "test-jar" typed dependency from A to B.
+We can see that in `a/pom.xml`.
+
+Test JARs includes all the bytecode resulting from the compilation of the sources present in `src/test/java` 
+(or more generally: `${build.testSourceDirectory}`). They are usually produced by the [Maven JAR plugin](https://maven.apache.org/plugins/maven-jar-plugin/) and its [`test-jar`](https://maven.apache.org/plugins/maven-jar-plugin/test-jar-mojo.html).
+Modules A and B are no exceptions, as we can see in the `<plugins>` section of their respective `pom.xml`.
+
+### Action!
+
+Let's now introduce a test in module C, which will leverage A's `TestUtilA` class.
+
+First, let's declare the extra dependencies in `c/pom.xml` (in the `<dependencies>` section):
+
+```xml
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>5.7.2</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>a</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+    </dependency>
+```
+
+Then, let's add a new test class in module C (`c/src/test/java/TestC.java`), which calls a method of `TestUtilA`.
+
+```java
+// JUnit is the de facto standard test execution framework in Java
+// Here, we are using JUnit 5 (aka JUnit Jupiter)
+// The Maven Surefire plugin (https://maven.apache.org/surefire/maven-surefire-plugin/) is the default plugin bound to the `test` phase.
+// Its recent versions support JUnit 5 out of the box!
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class TestC
+{
+
+    // runs before each test
+    @BeforeEach
+    void setup()
+    {
+        TestUtilA.ensureA();
+    }
+
+    // specific test checking something very important ;)
+    @Test
+    void shouldBeFalse()
+    {
+        assertFalse( false );
+    }
+}
+```
+
+Let's try to run the test, with the following simple invocation:
+
+```shell
+mvn test
+```
+
+It failed, why? How can we fix it?
+
+Hint:
+```xml
+<dependency>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>b</artifactId>
+    <version>${project.version}</version>
+    <type>test-jar</type>
+    <scope>test</scope>
+</dependency>
+```
+
+Can we structure this use-case in a better way? 
