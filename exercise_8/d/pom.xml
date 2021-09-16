@@ -13,14 +13,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <artifactId>d</artifactId>
     <name>Module D</name>
     <packaging>jar</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>c</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>
 
 
