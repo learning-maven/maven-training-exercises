@@ -58,8 +58,8 @@ Do all modules run in parallel? Why (or why not)?
 
 ## Step 5: Test Jars?
 
-What is a test-jar? Look into TestCallbacksB class inside module b, which is used by TestCallbacksA in module a. For that to happen (to depend on test classes),
-we added a test-jar typed dependency from a to b. Let's add a new Test class on c, and extend it with `TestCallbacksA` from module a.
+What is a test-jar? Look into `TestUtilB` class inside module b, which is used by `TestUtilA` in module a. For that to happen (to depend on test classes),
+we added a test-jar typed dependency from a to b. Let's add a new Test class on c, and use `TestUtilA` from module a.
 
 ```xml
 
@@ -87,9 +87,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@ExtendWith( TestCallbacksA.class )
 public class TestC
 {
+    
+    @BeforeEach
+    void setup()
+    {
+        TestUtilA.ensureA();
+    }
 
     @Test
     void shouldBeFalse()
