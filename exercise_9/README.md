@@ -213,7 +213,7 @@ let's try it out;
 
 ```shell
 $> mvn clean package
-$> javar -jar target/packaging-1.0-SNAPSHOT-shaded.jar -g Hey "my shaded jar"
+$> java -jar target/packaging-1.0-SNAPSHOT-shaded.jar -g Hey "my shaded jar"
 ```
 
 You can inspect the shaded jar and verify that picocli package is indeed shaded.
