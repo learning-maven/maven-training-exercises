@@ -143,4 +143,39 @@ Hint:
 </dependency>
 ```
 
-Can we structure this use-case in a better way? 
+Can we structure this use-case in a better way?
+
+## Bonus: Maven 4 improvements
+
+Let's try to build module C from the folder of module A:
+
+```shell
+mvn --file ../c/pom.xml package
+```
+
+Unfortunately, Maven 3 does not understand that these folders are part
+of a multimodule project.
+The only way for Maven 3 to build from module A folder is to run:
+
+```shell
+mvn --file ../pom.xml --also-make --projects c package
+```
+
+Maven 4 to the rescue! (Mac OS users: [here is an easy way](https://github.com/mthmulders/homebrew-maven-snapshot) to install Maven 4)
+
+```shell
+mvn4 --file ../c/pom.xml package
+```
+
+You can even run a build from outside the project file tree:
+
+```shell
+cd /tmp
+mvn4 --file ~/workspace/maven-training-exercises/exercise_8/c/pom.xml package
+```
+
+How does it work?
+Maven will resolve the project folders by moving up to the first `.mvn` folder it encounters.
+
+Note: if you run the same command with module A, Maven 4 will fail.
+Test JAR resolution is still not supported, unfortunately.
