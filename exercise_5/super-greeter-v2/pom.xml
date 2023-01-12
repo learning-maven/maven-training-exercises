@@ -25,6 +25,9 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <!-- enforcer plugin will be added here -->
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
