@@ -53,7 +53,7 @@ build->plugins in `my-application/pom.xml`.
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-enforcer-plugin</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <executions>
         <execution>
             <id>enforce</id>
@@ -63,7 +63,7 @@ build->plugins in `my-application/pom.xml`.
             </goals>
             <configuration>
                 <rules>
-                    <DependencyConvergence></DependencyConvergence>
+                    <DependencyConvergence />
                 </rules>
             </configuration>
         </execution>
